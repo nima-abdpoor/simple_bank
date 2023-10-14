@@ -4,7 +4,8 @@ const con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "12345678",
-    insecureAuth : true
+    insecureAuth : true,
+    database: "sys"
 });
 
 function connectDatabase(){
@@ -12,6 +13,7 @@ function connectDatabase(){
         if (err) throw err;
         console.log("Database Connected!");
     });
+    return con
 }
 
 module.exports = connectDatabase

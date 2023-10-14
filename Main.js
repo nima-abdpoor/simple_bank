@@ -1,11 +1,11 @@
-// const controller = require("./controller/InitController")
 const initDB = require("./db/DataBaseInit")
 const server = require("./server/Server")
+const startController = require("./server/InitController");
 
 
 main()
 function main(){
-    initDB()
+    let dbConnection = initDB()
     server.startServer()
-    // controller(server.router).then()
+    startController(server.router, dbConnection).then()
 }
