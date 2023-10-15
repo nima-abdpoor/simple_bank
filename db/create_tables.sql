@@ -13,7 +13,7 @@ CREATE TABLE accounts
     `Id`     INT PRIMARY KEY UNIQUE auto_increment,
     `name`   varchar(255),
     `number` varchar(255),
-    `type`   INT
+    `type`   varchar(255)
 );
 
 CREATE TABLE user_account
@@ -22,13 +22,6 @@ CREATE TABLE user_account
     `user`    INT,
     `account` INT
 );
-
-CREATE TABLE account_type
-(
-    `Id`   INT PRIMARY KEY UNIQUE auto_increment,
-    `name` varchar(255)
-);
-
 
 CREATE TABLE `permissions`
 (
@@ -75,14 +68,12 @@ CREATE TABLE `service_call`
     `response_status` varchar(255)
 );
 
-CREATE UNIQUE INDEX type ON accounts(type);
 CREATE UNIQUE INDEX account ON users(account);
 CREATE UNIQUE INDEX account ON user_account(account);
 CREATE UNIQUE INDEX permission ON users(permission);
 CREATE UNIQUE INDEX permission ON user_permission(permission);
 CREATE UNIQUE INDEX user_token ON tokens(user);
 CREATE UNIQUE INDEX service_token ON tokens(token_service);
-ALTER TABLE `account_type` ADD FOREIGN KEY (`id`) REFERENCES `accounts` (`type`);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`user`) REFERENCES `users` (`account`);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`id`);
 ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`permission`);

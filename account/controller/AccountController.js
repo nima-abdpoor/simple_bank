@@ -6,12 +6,14 @@ async function CreateAccount(router, db){
         router.post("/createAccount", async (context, next) => {
         try {
             name = context.request.body.name
-            type = context.request.body.type
+            let type = context.request.body.type
             if (name === undefined || type === undefined || !AccountTypes.includes(type)){
                  context.status = 400
                     return context.body = {message : "name or type should be valid!!"}
             }
-            createAccount(db, {name: name, type: type, number: "123456"})
+            let accountNumber = Math.floor((Math.random() * 10000) + 10000);
+            accountNumber += (AccountTypes.findIndex(x => x === type) + 1).toString()
+            createAccount(db, {name: name, type: type, number: accountNumber})
             return context.status = 200
         }catch (error){
             console.log("AccountController:" + error)
