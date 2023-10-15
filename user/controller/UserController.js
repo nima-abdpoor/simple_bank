@@ -4,10 +4,16 @@ async function CreateUser(router, db){
     let status = 502
     router.post("/createUser", async (context, next) => {
         try {
+            if (context.request.body.username === undefined || context.request.body.password === undefined){
+                context.status = 400
+                return context.body = {error : "username and password should be provided!"}
+            }
             let username = context.request.body.username
             let password = context.request.body.password
-            if (!CheckPassword(password))
-                return context.status = 400
+            if (!CheckPassword(password)) {
+                context.status = 400
+                return context.body = {error: "choose strong password!"}
+            }
 
             await encryptPassword(password).then((result) => {
                 if (result.error) {
@@ -29,7 +35,7 @@ async function CreateUser(router, db){
 }
 
 function CheckPassword(input) {
-    const pass = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+    const pass = /^(?=\D*\d)(?=(?:\W*\w){4})(?=.*[!@#$%^&*])[\w!@#$%^&*]+$/;
     return input.match(pass)
 }
 
