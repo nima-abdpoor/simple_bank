@@ -4,6 +4,7 @@ CREATE TABLE users
     `Id`         INT PRIMARY KEY UNIQUE auto_increment,
     `username`   varchar(255),
     `password`   varchar(255),
+    `nid`        varchar(255) UNIQUE,
     `account`    INT,
     `permission` INT
 );

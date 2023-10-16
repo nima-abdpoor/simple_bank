@@ -2,14 +2,18 @@ const createUser = require("../db/Users");
 const bcrypt = require("bcryptjs")
 async function CreateUser(router, db){
     let status = 502
+    let hashedPassword = ""
     router.post("/createUser", async (context, next) => {
         try {
-            if (context.request.body.username === undefined || context.request.body.password === undefined){
+            if (context.request.body.username === undefined
+                || context.request.body.password === undefined
+                || context.request.body.nid === undefined){
                 context.status = 400
-                return context.body = {error : "username and password should be provided!"}
+                return context.body = {error : "username, nid and password should be provided!"}
             }
             let username = context.request.body.username
             let password = context.request.body.password
+            let nid = context.request.body.nid
             if (!CheckPassword(password)) {
                 context.status = 400
                 return context.body = {error: "choose strong password!"}
@@ -19,16 +23,15 @@ async function CreateUser(router, db){
                 if (result.error) {
                     console.error('Error:', result.error);
                 } else {
-                    createUser(db, {username: username, password: result.hashedPassword})
-                    status = 200
+                    hashedPassword = result.hashedPassword
                 }
             });
+            const result = await createUser(db, {username: username, password: hashedPassword, nid: nid});
+            return context.status = 200
 
-            return context.status = status
-
-        }catch (error){
-            console.log("UserController:" + error)
-            context.body = error
+        }catch (err){
+            console.log("UserController:" + err)
+            context.body = {error: err}
             return context.status = 502
         }
     })
