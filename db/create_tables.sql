@@ -5,7 +5,6 @@ CREATE TABLE users
     `username`   varchar(255),
     `password`   varchar(255),
     `nid`        varchar(255) UNIQUE,
-    `account`    INT,
     `permission` INT
 );
 
@@ -69,13 +68,11 @@ CREATE TABLE `service_call`
     `response_status` varchar(255)
 );
 
-CREATE UNIQUE INDEX account ON users(account);
-CREATE UNIQUE INDEX account ON user_account(account);
 CREATE UNIQUE INDEX permission ON users(permission);
 CREATE UNIQUE INDEX permission ON user_permission(permission);
 CREATE UNIQUE INDEX user_token ON tokens(user);
 CREATE UNIQUE INDEX service_token ON tokens(token_service);
-ALTER TABLE `user_account` ADD FOREIGN KEY (`user`) REFERENCES `users` (`account`);
+ALTER TABLE `user_account` ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`id`);
 ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`permission`);
 ALTER TABLE `permissions` ADD FOREIGN KEY (`id`) REFERENCES `user_permission` (`permission`);

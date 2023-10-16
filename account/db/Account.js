@@ -1,8 +1,14 @@
 function createAccount(connection, account) {
-    const createAccountQuery = "INSERT INTO accounts SET ?"
-    connection.query(createAccountQuery, account, (err, res) => {
-        if (err) throw err;
-    })
+    return new Promise((resolve, reject) => {
+        const createAccountQuery = "INSERT INTO accounts SET ?"
+        connection.query(createAccountQuery, account, (err, res) => {
+            if (err) {
+                reject(err.sqlMessage);
+            } else {
+                resolve(res);
+            }
+        })
+    });
 }
 
 const AccountType = {

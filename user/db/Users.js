@@ -11,4 +11,20 @@ function createUser(connection, user) {
     });
 }
 
-module.exports = createUser
+function getUser(connection, nid) {
+    return new Promise((resolve, reject) => {
+        const getUserQuery = "SELECT * from users where nid = ?";
+        connection.query(getUserQuery, nid, (err, result) => {
+            if (err) {
+                reject(err)
+            }else {
+                resolve(result[0])
+            }
+        })
+    })
+}
+
+module.exports = {
+    createUser,
+    getUser
+}
