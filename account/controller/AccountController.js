@@ -1,4 +1,4 @@
-const {createAccount, AccountTypes }  = require("../db/Account");
+const {createAccount, AccountTypes, createAccountTransaction }  = require("../db/Account");
 const {getUser} = require("../../user/db/Users");
 const createUserAccount = require("../db/UserAccount");
 
@@ -20,10 +20,12 @@ async function CreateAccount(router, db){
             }
             let accountNumber = Math.floor((Math.random() * 10000) + 10000);
             accountNumber += (AccountTypes.findIndex(x => x === type) + 1).toString()
-            const createAccountResult = await createAccount(db, {name: name, type: type, number: accountNumber})
-            const createUserAccountResult = await createUserAccount(db, {user: userResult.Id, account: createAccountResult.insertId})
+            createAccountTransaction(db, {name: name, type: type, number: accountNumber, userId: userResult.Id}).catch(err => {
+                console.log(err)
+            });
             return context.status = 200
         }catch (error){
+            console.log(error)
             console.log("AccountController:" + error)
             return context.status = 502
         }

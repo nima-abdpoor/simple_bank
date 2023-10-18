@@ -4,8 +4,7 @@ CREATE TABLE users
     `Id`         INT PRIMARY KEY UNIQUE auto_increment,
     `username`   varchar(255),
     `password`   varchar(255),
-    `nid`        varchar(255) UNIQUE,
-    `permission` INT
+    `nid`        varchar(255) UNIQUE
 );
 
 CREATE TABLE accounts
@@ -23,17 +22,12 @@ CREATE TABLE user_account
     `account` INT
 );
 
-CREATE TABLE `permissions`
-(
-    `id`   INT PRIMARY KEY UNIQUE auto_increment,
-    `name` varchar(255)
-);
-
 CREATE TABLE `user_permission`
 (
     `id`         INT PRIMARY KEY UNIQUE auto_increment,
     `user`       INT,
-    `permission` INT
+    `account_id` INT,
+    `permission` varchar(255)
 );
 
 CREATE TABLE `tokens`
@@ -68,14 +62,12 @@ CREATE TABLE `service_call`
     `response_status` varchar(255)
 );
 
-CREATE UNIQUE INDEX permission ON users(permission);
-CREATE UNIQUE INDEX permission ON user_permission(permission);
 CREATE UNIQUE INDEX user_token ON tokens(user);
 CREATE UNIQUE INDEX service_token ON tokens(token_service);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`id`);
-ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`permission`);
-ALTER TABLE `permissions` ADD FOREIGN KEY (`id`) REFERENCES `user_permission` (`permission`);
+ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
+ALTER TABLE `user_permission` ADD FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`);
 ALTER TABLE `tokens` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
 ALTER TABLE `token_service` ADD FOREIGN KEY (`token`) REFERENCES `tokens` (`token_service`);
 ALTER TABLE `token_service` ADD FOREIGN KEY (`service`) REFERENCES `services` (`id`);
