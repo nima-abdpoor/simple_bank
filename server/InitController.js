@@ -1,5 +1,5 @@
 const User = require("./../user/controller/UserController");
-const {GetToken, GetRefreshToken} = require("./../token/controller/TokenController");
+const {GetToken} = require("./../token/controller/TokenController");
 const CreateAccount = require("../account/controller/AccountController");
 
 async function startController(router, db) {
@@ -11,7 +11,6 @@ async function startController(router, db) {
 
     //token
     await GetToken(router, db)
-    await GetRefreshToken(router, db)
 }
 
 module.exports = startController
