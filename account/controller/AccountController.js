@@ -1,10 +1,12 @@
 const {createAccount, AccountTypes, createAccountTransaction }  = require("../db/Account");
 const {getUser} = require("../../user/db/Users");
+const {Services, Service} = require("../../utils/Services")
 require("../db/UserAccount");
 require("../../utils/PasswordDecryption");
 const jwt = require("jsonwebtoken");
 
 async function CreateAccount(router, db){
+    let serviceName= Service.ADD_ACCOUNT
         router.post("/:nid/createAccount", async (context, next) => {
         try {
             name = context.request.body.name
@@ -28,8 +30,10 @@ async function CreateAccount(router, db){
                 context.status = 401
                 return context.body = {error: "Invalid token type"}
             }
-            console.log(decoded.sub)
-            console.log(decoded.name)
+            if ((decoded.sub+'').indexOf(serviceName) <= -1) {
+                context.status = 401
+                return context.body = {error: "provided token is not compatible with current service!"}
+            }
             const userResult = await getUser(db, context.params.nid)
             let accountNumber = Math.floor((Math.random() * 10000) + 10000);
             accountNumber += (AccountTypes.findIndex(x => x === type) + 1).toString()

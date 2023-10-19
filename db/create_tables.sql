@@ -56,7 +56,6 @@ CREATE TABLE `service_call`
 );
 
 CREATE UNIQUE INDEX user_token ON tokens(user);
-CREATE UNIQUE INDEX service_token ON tokens(token_service);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
 ALTER TABLE `user_account` ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`id`);
 ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);

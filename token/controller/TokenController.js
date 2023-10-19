@@ -1,7 +1,7 @@
 const {Login, Refresh} = require("../../service/AuthService");
-const jwt = require("jsonwebtoken");
+const {Services} = require("../../utils/Services")
+require("jsonwebtoken");
 const {getUser} = require("../../user/db/Users");
-const {AccountTypes} = require("../../account/db/Account");
 const isPasswordMatches = require("../../utils/PasswordDecryption");
 
 async function GetToken(router, db) {
@@ -37,11 +37,6 @@ async function GetToken(router, db) {
                 Login({payload: payload,username: context.params.nid})
             context.status = 200
             return context.body = {accessToken: access}
-
-            // const decoded = jwt.verify(access, process.env.JWT_KEY);
-            // console.log("type:" + decoded.type)
-            // console.log("sub:" + decoded.sub)
-            // console.log("name:" + decoded.name)
         } catch (err) {
             console.log(err)
             context.body = err.message
@@ -62,14 +57,6 @@ async function GetRefreshToken(router, db){
     })
 }
 
-const Services = ["ADD_ACCOUNT", "GET_DEPOSITS", "UPDATE_PERMISSIONS", "GET_PERMISSIONS"]
-
-const Service = {
-    ADD_ACCOUNT: 1,
-    GET_DEPOSITS: 2,
-    UPDATE_PERMISSIONS: 3,
-    GET_PERMISSIONS: 4
-}
 
 module.exports = {
     GetToken,
