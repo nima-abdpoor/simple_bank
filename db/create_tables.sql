@@ -34,7 +34,6 @@ CREATE TABLE `tokens`
 (
     `id`            INT PRIMARY KEY UNIQUE auto_increment,
     `user`          INT,
-    `token_service` INT,
     `created_at`    timestamp,
     `expire_at`     timestamp
 );
@@ -43,20 +42,14 @@ CREATE TABLE `token_service`
 (
     `id`      INT primary key unique auto_increment,
     `token`   INT,
-    `service` INT
-);
-
-CREATE TABLE `services`
-(
-    `id`   INT PRIMARY KEY UNIQUE auto_increment,
-    `name` varchar(255)
+    `service` varchar(255)
 );
 
 CREATE TABLE `service_call`
 (
     `id`              INT PRIMARY KEY UNIQUE auto_increment,
     `user`            INT,
-    `service`         INT,
+    `service`         varchar(255),
     `request`         varchar(255),
     `response`        varchar(255),
     `response_status` varchar(255)
@@ -69,10 +62,8 @@ ALTER TABLE `user_account` ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`i
 ALTER TABLE `user_permission` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
 ALTER TABLE `user_permission` ADD FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`);
 ALTER TABLE `tokens` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
-ALTER TABLE `token_service` ADD FOREIGN KEY (`token`) REFERENCES `tokens` (`token_service`);
-ALTER TABLE `token_service` ADD FOREIGN KEY (`service`) REFERENCES `services` (`id`);
+ALTER TABLE `token_service` ADD FOREIGN KEY (`token`) REFERENCES `tokens` (`id`);
 ALTER TABLE `service_call` ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
-ALTER TABLE `service_call` ADD FOREIGN KEY (`service`) REFERENCES `services` (`id`);
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
 flush privileges;
