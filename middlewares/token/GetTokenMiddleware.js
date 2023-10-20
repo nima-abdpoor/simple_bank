@@ -1,6 +1,6 @@
 require("../../utils/PasswordDecryption");
 const {getUser} = require("../../user/db/Users");
-const {connectDatabase} = require("../../db/DataBaseInit");
+const {mysqlPool} = require("../../db/DataBaseInit");
 const isPasswordMatches = require("../../utils/PasswordDecryption");
 const {getNidFromPath} = require("../common/CommonMiddleware");
 
@@ -21,7 +21,7 @@ async function checkPassword(ctx, next) {
     if (ctx.path.includes("/token")) {
         let password = ctx.request.body.password
         let nid = getNidFromPath(ctx.path)
-        let userResult = await getUser(connectDatabase(), nid)
+        let userResult = await getUser(mysqlPool, nid)
         let result = await isPasswordMatches(password, userResult.password)
         if (!result){
             ctx.status = 403

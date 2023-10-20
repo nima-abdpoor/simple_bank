@@ -1,5 +1,5 @@
-const mysql = require('mysql2');
-const con = mysql.createPool({
+const mysql = require('mysql2')
+const mysqlPool = mysql.createPool({
     host: "localhost",
     user: "root",
     password: "12345678",
@@ -7,8 +7,6 @@ const con = mysql.createPool({
     connectionLimit: 10,
 });
 
-function connectDatabase(){
-   return con
+module.exports = {
+    mysqlPool
 }
-
-module.exports = connectDatabase

@@ -1,5 +1,5 @@
 const {getUser} = require("../../user/db/Users");
-const {dbConnection} = require("../../db/DataBaseInit")
+const {mysqlPool} = require("../../db/DataBaseInit")
 const isPasswordMatches = require("../../utils/PasswordDecryption");
 const tenDigitRegex = /^\d{10}$/;
 
@@ -30,12 +30,12 @@ function getNidFromPath(path){
 async function checkUserExistence(ctx, next){
     if (ctx.path.includes("/token")) {
         let nid = getNidFromPath(ctx.path)
-        let userResult = await getUser(dbConnection, nid)
+        let userResult = await getUser(mysqlPool, nid)
         if (userResult === undefined) {
             ctx.status = 400
             return ctx.body = {error: `Cant find user with nationalCode:${nid}!`}
         }else await next()
-    } await next()
+    } else await next()
 }
 
 module.exports = {
