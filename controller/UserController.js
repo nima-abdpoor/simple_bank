@@ -1,4 +1,4 @@
-const {createUser} = require("../db/Users");
+const {createUser} = require("../db/user/Users");
 const bcrypt = require("bcryptjs")
 async function CreateUser(router, db){
     let status = 502

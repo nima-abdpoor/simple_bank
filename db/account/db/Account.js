@@ -1,4 +1,4 @@
-const accountPermissions = require("../../permission/Permissions")
+const accountPermissions = require("../../../utils/permission/Permissions")
 
 const createAccountQuery = "INSERT INTO accounts (name, number, type) VALUES (?,?,?)"
 const createUserAccount = "INSERT INTO user_account (user, account) VALUES (?,?)"

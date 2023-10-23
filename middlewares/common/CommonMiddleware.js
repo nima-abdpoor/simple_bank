@@ -1,4 +1,4 @@
-const {getUser} = require("../../user/db/Users");
+const {getUser} = require("../../db/user/Users");
 const {mysqlPool} = require("../../db/DataBaseInit")
 const isPasswordMatches = require("../../utils/PasswordDecryption");
 const tenDigitRegex = /^\d{10}$/;

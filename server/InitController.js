@@ -1,6 +1,6 @@
-const User = require("./../user/controller/UserController");
-const {GetToken} = require("./../token/controller/TokenController");
-const CreateAccount = require("../account/controller/AccountController");
+const User = require("../controller/UserController");
+const {GetToken} = require("../controller/TokenController");
+const CreateAccount = require("../controller/AccountController");
 
 async function startController(router, db) {
     //user

@@ -1,8 +1,8 @@
-const {createAccount, AccountTypes, createAccountTransaction }  = require("../db/Account");
-const {getUser} = require("../../user/db/Users");
-const {Services, Service} = require("../../utils/Services")
-require("../db/UserAccount");
-require("../../utils/PasswordDecryption");
+const {createAccount, AccountTypes, createAccountTransaction }  = require("../db/account/db/Account");
+const {getUser} = require("../db/user/Users");
+const {Services, Service} = require("../utils/Services")
+require("../db/account/db/UserAccount");
+require("../utils/PasswordDecryption");
 const jwt = require("jsonwebtoken");
 
 async function CreateAccount(router, db){

@@ -1,7 +1,7 @@
-const {Login} = require("../../service/AuthService");
-const {Services} = require("../../utils/Services")
+const {Services} = require("../utils/Services")
 require("jsonwebtoken");
-require("../../utils/PasswordDecryption");
+require("../utils/PasswordDecryption");
+const generateJWT = require("../service/JWTService");
 
 async function GetToken(router, db) {
     router.get("/:nid/token", async (context, next) => {
@@ -17,8 +17,9 @@ async function GetToken(router, db) {
                 serviceIndex++
                 payload += serviceIndex
             }
+            console.log("subject:" + payload)
             const {access} =
-                Login({payload: payload, username: context.params.nid})
+                generateJWT(payload, context.params.nid)
             context.status = 200
             return context.body = {accessToken: access}
         } catch (err) {
