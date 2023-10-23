@@ -12,9 +12,7 @@ async function checkInput(ctx, next) {
             ctx.status = 400
             return ctx.body = {message : "services and password should be valid!!"}
         }else await next()
-    } else {
-        await next();
-    }
+    } else await next();
 }
 
 async function checkPassword(ctx, next) {

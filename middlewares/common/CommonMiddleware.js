@@ -1,10 +1,12 @@
 const {getUser} = require("../../db/user/Users");
 const {mysqlPool} = require("../../db/DataBaseInit")
 const isPasswordMatches = require("../../utils/PasswordDecryption");
+const jwt = require("jsonwebtoken");
+const {Service} = require("../../utils/Services");
 const tenDigitRegex = /^\d{10}$/;
 
 async function checkNationalCodeValidation(ctx, next) {
-    if (ctx.path.includes("/token")) {
+    if (ctx.path.includes("/token") || ctx.path.includes("/createAccount")) {
         let nid = getNidFromPath(ctx.path)
         if (nid !== "") {
             if (!tenDigitRegex.test(nid)) {
@@ -38,8 +40,44 @@ async function checkUserExistence(ctx, next){
     } else await next()
 }
 
+async function checkTokenValidation(ctx, next) {
+    if (ctx.path.includes("/createAccount")){
+        let serviceName= Service.ADD_ACCOUNT
+        try {
+            const token = ctx.request.headers.authorization;
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            if (
+                decoded.type !== process.env.JWT_ACCESS ||
+                decoded.aud !== process.env.JWT_AUDIENCE ||
+                decoded.iss !== process.env.JWT_ISSUER ||
+                decoded.name !== getNidFromPath(ctx.path)
+            ) {
+                ctx.status = 401
+                return ctx.body = {error: "Invalid token type"}
+            }
+            if ((decoded.sub+'').indexOf(serviceName) <= -1) {
+                ctx.status = 401
+                return ctx.body = {error: "provided token is not compatible with current service!"}
+            } else await next()
+        }catch (err){
+            if (err.name === "JsonWebTokenError") {
+                ctx.status = 401
+                return ctx.body = {error: "Invalid token type"}
+            }
+            if (err.name === "TokenExpiredError") {
+                ctx.status = 401
+                return ctx.body = {error: "Token has been expired!"}
+            } else {
+                console.error(err)
+                ctx.status = 500
+                return ctx.body = {error: "Internal Server Error in validating Token!"}
+            }
+        }
+    }else await next()
+}
+
 module.exports = {
-    getNidFromPath,
     checkNationalCodeValidation,
-    checkUserExistence
+    checkUserExistence,
+    checkTokenValidation
 }

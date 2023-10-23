@@ -1,6 +1,7 @@
 const {checkInput, checkPassword} = require("./token/GetTokenMiddleware")
+const {checkCreateAccountInput} = require("./account/CreateAccountMiddleware")
 const compose = require('koa-compose');
-const {checkNationalCodeValidation, checkUserExistence} = require("./common/CommonMiddleware");
+const {checkNationalCodeValidation, checkUserExistence, checkTokenValidation} = require("./common/CommonMiddleware");
 
 const Middlewares = compose(
     [
@@ -8,9 +9,13 @@ const Middlewares = compose(
         checkInput,
         checkPassword,
 
+        //CreateAccount
+        checkCreateAccountInput,
+
         //Common
         checkNationalCodeValidation,
-        checkUserExistence
+        checkUserExistence,
+        checkTokenValidation,
     ]
 );
 
