@@ -77,6 +77,7 @@ async function checkTokenValidation(ctx, next) {
 }
 
 module.exports = {
+    getNidFromPath,
     checkNationalCodeValidation,
     checkUserExistence,
     checkTokenValidation

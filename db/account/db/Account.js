@@ -55,7 +55,7 @@ const createAccountTransaction = (pool, transactionBody) => {
                             if (err) {
                                 return connection.rollback(() => {
                                     connection.release();
-                                    return reject("Commit failed");
+                                    return reject("createAccountTransaction Commit failed");
                                 });
                             }
                             connection.release()

@@ -1,4 +1,5 @@
-use sys;
+use
+sys;
 CREATE TABLE users
 (
     `Id`         INT PRIMARY KEY UNIQUE auto_increment,
@@ -37,7 +38,8 @@ CREATE TABLE `tokens`
 (
     `id`         INT PRIMARY KEY UNIQUE auto_increment,
     `user`       INT,
-    `created_at` timestamp
+    `token`      varchar(255),
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `token_service`
@@ -74,5 +76,7 @@ ALTER TABLE `token_service`
 ALTER TABLE `service_call`
     ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-flush privileges;
+ALTER
+USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+flush
+privileges;

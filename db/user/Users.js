@@ -12,7 +12,6 @@ function createUser(connection, user) {
 }
 
 function getUser(connection, nid) {
-    console.log(nid)
     return new Promise((resolve, reject) => {
         const getUserQuery = "SELECT * from users where nid = ?";
         connection.query(getUserQuery, [nid], (err, result) => {
