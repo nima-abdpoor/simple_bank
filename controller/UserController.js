@@ -30,6 +30,10 @@ async function CreateUser(router, db){
             return context.status = 200
 
         }catch (err){
+            if (err.includes("Duplicate entry")){
+                context.body = {error: err.message}
+                return context.status = 401
+            }
             console.log("UserController:" + err)
             context.body = {error: err}
             return context.status = 502
