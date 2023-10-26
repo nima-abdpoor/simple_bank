@@ -20,6 +20,7 @@ async function checkPassword(ctx, next) {
         let password = ctx.request.body.password
         let nid = getNidFromPath(ctx.path)
         let userResult = await getUser(mysqlPool, nid)
+        console.log(userResult)
         let result = await isPasswordMatches(password, userResult.password)
         if (!result){
             ctx.status = 403

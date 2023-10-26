@@ -11,6 +11,7 @@ const Middlewares = compose(
 
         //GET_TOKEN:
         checkInput,
+        checkUserExistence,
         checkPassword,
 
         //CreateAccount
@@ -18,7 +19,6 @@ const Middlewares = compose(
 
         //Common
         checkNationalCodeValidation,
-        checkUserExistence,
         checkTokenValidation,
     ]
 );
