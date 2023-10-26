@@ -32,9 +32,10 @@ async function CreateAccount(router, db) {
 async function GetAccount(router, db) {
     router.get("/:nid/accounts", async (context, next) => {
         try {
+            const type = context.request.query.type;
+            const number = context.request.query.number;
             const userResult = await getUser(db, context.params.nid)
-            let accounts = await getAccounts(db, userResult.Id)
-            console.log(accounts)
+            let accounts = await getAccounts(db, {id: userResult.Id, type: type, number: number})
             context.status = 200
             return context.body = accounts
         } catch (error) {
