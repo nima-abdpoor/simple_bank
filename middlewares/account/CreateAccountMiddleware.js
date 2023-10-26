@@ -15,6 +15,11 @@ async function checkCreateAccountInput(ctx, next){
     } else await next()
 }
 
+async function checkGetAccountInput(ctx, next){
+    await next()
+}
+
 module.exports = {
-    checkCreateAccountInput
+    checkCreateAccountInput,
+    checkGetAccountInput
 }

@@ -1,6 +1,6 @@
 const {mysqlPool} = require("./db/DataBaseInit")
 const server = require("./server/Server")
-const startController = require("./server/InitController");
+const startController = require("./controller/InitController");
 const dotenv = require("dotenv");
 
 

@@ -71,7 +71,6 @@ CREATE TABLE `service_call`
     `response_status` varchar(255)
 );
 
-CREATE UNIQUE INDEX user_token ON tokens (user);
 ALTER TABLE `user_account`
     ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
 ALTER TABLE `user_account`

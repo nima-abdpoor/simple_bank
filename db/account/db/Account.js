@@ -1,11 +1,14 @@
 const accountPermissions = require("../../../utils/permission/Permissions")
 
+const getAccountQuery = "select name, number, type, created_at from accounts join user_account\n" +
+    "where accounts.id = user_account.account AND user_account.user = ?"
 const createAccountQuery = "INSERT INTO accounts (name, number, type) VALUES (?,?,?)"
 const createUserAccount = "INSERT INTO user_account (user, account) VALUES (?,?)"
 const createUserPermissions = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
-function createAccount(connection, account) {
+
+function getAccounts(connection, id){
     return new Promise((resolve, reject) => {
-        connection.query(createAccountQuery, account, (err, res) => {
+        connection.query(getAccountQuery, id, (err, res) => {
             if (err) {
                 reject(err.sqlMessage);
             } else {
@@ -77,7 +80,7 @@ const AccountType = {
 const AccountTypes = ["SAVING", "MONEY_MARKET", "FIXED_DEPOSIT", "CURRENT"]
 
 module.exports = {
-    createAccount,
     AccountTypes,
-    createAccountTransaction
+    createAccountTransaction,
+    getAccounts
 }
