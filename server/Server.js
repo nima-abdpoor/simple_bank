@@ -14,7 +14,7 @@ function startServer(){
     server.use(parser())
     server.use(Middlewares)
     server.use(router.routes())
-    server.listen(8086, "127.0.0.1", () => {
+    server.listen(8080, "127.0.0.1", () => {
         console.log("salam")
     })
 }

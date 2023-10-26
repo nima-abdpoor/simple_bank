@@ -1,7 +1,8 @@
 const {createUserServiceCall, createServiceCall} = require("../../db/interceptor/Interceptor");
 const {mysqlPool} = require("../../db/DataBaseInit");
 const {getUser} = require("../../db/user/Users");
-const {getNidFromPath} = require("./CommonMiddleware");
+const {getNidFromPath} = require("../common/CommonMiddleware");
+const {writeData} = require("../../db/influx/InitInfluxDB");
 
 async function interceptor(ctx, next) {
     let userResult
@@ -19,23 +20,21 @@ async function interceptor(ctx, next) {
         ctx.body = JSON.parse(ctx.body);
     }
     let responseBody = ctx.body
+    let result;
     if (userResult !== undefined) {
-        await createUserServiceCall(mysqlPool, {
+        result = await createUserServiceCall(mysqlPool, {
             user: userResult.Id,
             service: service,
-            request: rawBody,
-            response: JSON.stringify(responseBody),
             response_status: status
         })
     } else {
-        await createServiceCall(mysqlPool, {
+        result = await createServiceCall(mysqlPool, {
             address: address,
             service: service,
-            request: rawBody,
-            response: JSON.stringify(responseBody),
             response_status: status
         })
     }
+    await writeData(result.insertId, rawBody, JSON.stringify(responseBody))
     ctx.body = originalBody;
 }
 
