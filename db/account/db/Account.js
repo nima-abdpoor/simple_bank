@@ -7,8 +7,9 @@ const getAccountWithNumberSuffix = " AND accounts.number = ?"
 const createAccountQuery = "INSERT INTO accounts (name, number, type) VALUES (?,?,?)"
 const createUserAccount = "INSERT INTO user_account (user, account) VALUES (?,?)"
 const createUserPermissions = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
+const findAccountByNumber = "SELECT Id FROM accounts WHERE number = ?"
 
-function getAccounts(connection, getAccountBody){
+function getAccounts(connection, getAccountBody) {
     return new Promise((resolve, reject) => {
         let values = [getAccountBody.id]
         let query = getAccountQuery;
@@ -20,7 +21,7 @@ function getAccounts(connection, getAccountBody){
             query += getAccountWithNumberSuffix
             values.push(getAccountBody.number)
         }
-        connection.query(query, values , (err, res) => {
+        connection.query(query, values, (err, res) => {
             if (err) {
                 reject(err.sqlMessage);
             } else {
@@ -28,6 +29,18 @@ function getAccounts(connection, getAccountBody){
             }
         })
     });
+}
+
+function findAccountIdByNumber(connection, number) {
+    return new Promise((resolve, reject) => {
+        connection.query(findAccountByNumber, number, (err, res) => {
+            if (err) {
+                reject(err.sqlMessage);
+            } else {
+                resolve(res);
+            }
+        })
+    })
 }
 
 const createAccountTransaction = (pool, transactionBody) => {
@@ -41,7 +54,7 @@ const createAccountTransaction = (pool, transactionBody) => {
                     connection.release();
                     return reject("Error occurred while creating the transaction");
                 }
-                return connection.execute(createAccountQuery, [transactionBody.name, transactionBody.number, transactionBody.type], (err, result) =>{
+                return connection.execute(createAccountQuery, [transactionBody.name, transactionBody.number, transactionBody.type], (err, result) => {
                     if (err) {
                         return connection.rollback(() => {
                             connection.release();
@@ -94,5 +107,6 @@ const AccountTypes = ["SAVING", "MONEY_MARKET", "FIXED_DEPOSIT", "CURRENT"]
 module.exports = {
     AccountTypes,
     createAccountTransaction,
-    getAccounts
+    getAccounts,
+    findAccountIdByNumber
 }

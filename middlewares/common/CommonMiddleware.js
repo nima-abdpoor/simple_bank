@@ -9,6 +9,7 @@ async function checkNationalCodeValidation(ctx, next) {
     if (
         ctx.path.includes("/token") ||
         ctx.path.includes("/createAccount") ||
+        ctx.path.includes("/permission") ||
         ctx.path.includes("/createUser")) {
         let nid;
         if (ctx.path.includes("/createUser")) nid = ctx.request.body.nid
@@ -51,6 +52,10 @@ async function checkTokenValidation(ctx, next) {
     switch (true) {
         case ctx.path.includes("/createAccount"): {
             serviceName = Service.ADD_ACCOUNT
+            break;
+        }
+        case ctx.path.includes("/permission"): {
+            serviceName = Service.UPDATE_PERMISSIONS
             break;
         }
         case ctx.path.includes("/accounts"): {

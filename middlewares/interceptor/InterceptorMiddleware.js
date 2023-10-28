@@ -2,7 +2,7 @@ const {createUserServiceCall, createServiceCall} = require("../../db/interceptor
 const {mysqlPool} = require("../../db/DataBaseInit");
 const {getUser} = require("../../db/user/Users");
 const {getNidFromPath} = require("../common/CommonMiddleware");
-const {writeData} = require("../../db/influx/InitInfluxDB");
+const {writeDataInInflux} = require("../../db/influx/InitInfluxDB");
 
 async function interceptor(ctx, next) {
     let userResult
@@ -34,7 +34,7 @@ async function interceptor(ctx, next) {
             response_status: status
         })
     }
-    await writeData(result.insertId, rawBody, JSON.stringify(responseBody))
+    await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody))
     ctx.body = originalBody;
 }
 

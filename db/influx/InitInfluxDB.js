@@ -7,7 +7,7 @@ const bucket = 'bucket'
 
 const client = new InfluxDB({url: 'http://127.0.0.1:8086', token: token})
 
-async function writeData(id, request, response){
+async function writeDataInInflux(id, request, response){
     const writeApi = client.getWriteApi(org, bucket)
     writeApi.useDefaultTags({host: "BANK"})
     const requestPoint = new Point(id.toString())
@@ -26,5 +26,5 @@ async function writeData(id, request, response){
 
 
 module.exports = {
-    writeData
+    writeDataInInflux
 }
