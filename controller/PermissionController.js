@@ -14,7 +14,7 @@ async function UpdateUserPermission(router, db) {
                 context.status = 400
                 return context.body = {error: `cant find accountNumber: ${number}`}
             }
-            let userPermissions = await getUserPermissions(db, [accountId[0].Id, user.Id])
+            let userPermissions = await getUserPermissions(db, {account: accountId[0].Id, user: user.Id})
             let currentPermission = userPermissions.map(item => item.permission)
             let permissionsShouldBeAdd = permissions.filter(permission => !currentPermission.includes(permission));
             let permissionsShouldBeRemoved = currentPermission.filter(permission => !permissions.includes(permission));
@@ -37,6 +37,34 @@ async function UpdateUserPermission(router, db) {
     })
 }
 
+async function GetUserPermissions(router, db) {
+    router.get("/:nid/permissions", async (context, next) => {
+        let number = context.request.query.number
+        let nid = context.request.query.nid
+        let permissionType = context.request.query.type
+        let accountId;
+        let user;
+        if (number !== undefined) {
+            accountId = await findAccountIdByNumber(db, number)
+            if (accountId.length === 0) {
+                context.status = 400
+                return context.body = {error: `cant find accountNumber: ${number}`}
+            }
+        }
+        if (nid !== undefined) {
+            user = await getUser(db, nid)
+            if (user.length === 0){
+                context.status = 400
+                return context.body = {error: `cant find User: ${nid}`}
+            }
+        }
+        let userPermissions = await getUserPermissions(db, {account: accountId[0].Id, user: user.Id, type: permissionType})
+        let currentPermission = userPermissions.map(item => item.permission)
+        console.log(currentPermission)
+    })
+}
+
 module.exports = {
-    UpdateUserPermission
+    UpdateUserPermission,
+    GetUserPermissions
 }

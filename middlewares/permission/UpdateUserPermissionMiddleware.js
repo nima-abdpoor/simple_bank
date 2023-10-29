@@ -4,7 +4,7 @@ const accountPermissions = require("../../utils/permission/Permissions");
 
 
 async function checkUpdatePermissionInput(ctx, next) {
-    if (ctx.path.includes("/permission")) {
+    if (ctx.path.includes("/permission") && ctx.method === "POST") {
         let number = ctx.request.body.number
         let nid = ctx.request.body.nid
         let permission = ctx.request.body.permissions
