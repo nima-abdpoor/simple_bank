@@ -34,7 +34,7 @@ async function interceptor(ctx, next) {
             response_status: status
         })
     }
-    await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody))
+    // await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody))
     ctx.body = originalBody;
 }
 

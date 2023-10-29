@@ -1,4 +1,6 @@
 const {AccountTypes} = require("../../db/account/db/Account");
+const {Services} = require("../../utils/Services");
+const accountPermissions = require("../../utils/permission/Permissions");
 
 
 async function checkUpdatePermissionInput(ctx, next) {
@@ -15,7 +17,16 @@ async function checkUpdatePermissionInput(ctx, next) {
         ) {
             ctx.status = 400
             return ctx.body = {message: "number, nid and permissions should be valid!!"}
-        } else await next()
+        }
+        for (const value of permission) {
+            let permissionIndex = accountPermissions.indexOf(value);
+            if (permissionIndex === -1) {
+                ctx.status = 400;
+                ctx.body = { error: `Can't find permission: ${value}!` };
+                return
+            }
+        }
+        await next()
     } else await next()
 }
 
