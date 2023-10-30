@@ -11,7 +11,7 @@ const createTokenTransaction = (pool, transactionBody) => {
                     connection.release();
                     return reject("Error occurred while creating the transaction");
                 }
-                return connection.execute(createTokenQuery, [transactionBody.user, transactionBody.token], (err, result) => {
+                return connection.execute(createTokenQuery, [transactionBody.user, transactionBody.token.access], (err, result) => {
                     if (err) {
                         return connection.rollback(() => {
                             connection.release();
