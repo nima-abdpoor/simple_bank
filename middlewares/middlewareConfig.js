@@ -4,6 +4,7 @@ const compose = require('koa-compose');
 const {checkNationalCodeValidation, checkUserExistence, checkTokenValidation} = require("./common/CommonMiddleware");
 const {interceptor} = require("./interceptor/InterceptorMiddleware");
 const {checkUpdatePermissionInput} = require("./permission/UpdateUserPermissionMiddleware");
+const {checkUserPermissionInput} = require("./permission/GetUserPermissionsMiddleware");
 
 const Middlewares = compose(
     [
@@ -24,7 +25,8 @@ const Middlewares = compose(
         checkTokenValidation,
 
         //Permission
-        checkUpdatePermissionInput
+        checkUpdatePermissionInput,
+        checkUserPermissionInput
     ]
 );
 

@@ -1,6 +1,10 @@
 const {findAccountIdByNumber} = require("../db/account/db/Account");
 const {getUser} = require("../db/user/Users");
-const {getUserPermissions, addingUserPermissionsTransaction, removingUserPermissionsTransaction} = require("../db/user/UserPermission");
+const {
+    getUserPermissions,
+    addingUserPermissionsTransaction,
+    removingUserPermissionsTransaction
+} = require("../db/user/UserPermission");
 
 async function UpdateUserPermission(router, db) {
     router.post("/:nid/permission", async (context, next) => {
@@ -19,12 +23,14 @@ async function UpdateUserPermission(router, db) {
             let permissionsShouldBeAdd = permissions.filter(permission => !currentPermission.includes(permission));
             let permissionsShouldBeRemoved = currentPermission.filter(permission => !permissions.includes(permission));
             let IdsShouldBeRemoved = userPermissions.filter(user => permissionsShouldBeRemoved.includes(user.permission)).map(item => item.Id)
-            addingUserPermissionsTransaction(db, {user: user.Id, account: accountId[0].Id, add: permissionsShouldBeAdd}).
-            catch(err => {
+            addingUserPermissionsTransaction(db, {
+                user: user.Id,
+                account: accountId[0].Id,
+                add: permissionsShouldBeAdd
+            }).catch(err => {
                 console.log("UpdateUserPermission: " + err)
             });
-            removingUserPermissionsTransaction(db, {remove: IdsShouldBeRemoved}).
-            catch(err => {
+            removingUserPermissionsTransaction(db, {remove: IdsShouldBeRemoved}).catch(err => {
                 console.log("UpdateUserPermission: " + err)
             });
             context.body = {message: "permissions successfully updated!"}
@@ -39,28 +45,39 @@ async function UpdateUserPermission(router, db) {
 
 async function GetUserPermissions(router, db) {
     router.get("/:nid/permissions", async (context, next) => {
-        let number = context.request.query.number
-        let nid = context.request.query.nid
-        let permissionType = context.request.query.type
-        let accountId;
-        let user;
-        if (number !== undefined) {
-            accountId = await findAccountIdByNumber(db, number)
-            if (accountId.length === 0) {
-                context.status = 400
-                return context.body = {error: `cant find accountNumber: ${number}`}
+        try {
+            let number = context.request.query.number
+            let nid = context.request.query.nid
+            if (nid === undefined) nid = context.params.nid
+            let permissionType = context.request.query.type
+            let accountId;
+            let user;
+            if (number !== undefined) {
+                accountId = await findAccountIdByNumber(db, number)
+                if (accountId.length === 0) {
+                    context.status = 400
+                    return context.body = {error: `cant find accountNumber: ${number}`}
+                }
             }
-        }
-        if (nid !== undefined) {
-            user = await getUser(db, nid)
-            if (user.length === 0){
-                context.status = 400
-                return context.body = {error: `cant find User: ${nid}`}
+            if (nid !== undefined) {
+                user = await getUser(db, nid)
+                if (user.length === 0) {
+                    context.status = 400
+                    return context.body = {error: `cant find User: ${nid}`}
+                }
             }
+            let userPermissions = await getUserPermissions(db, {
+                account: accountId[0].Id,
+                user: user.Id,
+                type: permissionType
+            })
+            let currentPermission = userPermissions.map(item => item.permission)
+            context.body = {permissions: currentPermission}
+        } catch (error) {
+            console.log("ErrorInGetUserPermissionsController: " + error)
+            context.body = error
+            return context.status = 500
         }
-        let userPermissions = await getUserPermissions(db, {account: accountId[0].Id, user: user.Id, type: permissionType})
-        let currentPermission = userPermissions.map(item => item.permission)
-        console.log(currentPermission)
     })
 }
 

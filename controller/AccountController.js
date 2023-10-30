@@ -20,7 +20,13 @@ async function CreateAccount(router, db) {
             }).catch(err => {
                 console.log(err)
             });
-            context.body = {message: "Account created successfully."}
+            context.body = {
+                account: {
+                    name: name,
+                    type: type,
+                    number: accountNumber
+                }
+            }
             return context.status = 200
         } catch (error) {
             console.log("AccountController:" + error)

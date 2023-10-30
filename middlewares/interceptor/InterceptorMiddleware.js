@@ -21,20 +21,23 @@ async function interceptor(ctx, next) {
     }
     let responseBody = ctx.body
     let result;
+    let host;
     if (userResult !== undefined) {
+        host = "UserServiceCall"
         result = await createUserServiceCall(mysqlPool, {
             user: userResult.Id,
             service: service,
             response_status: status
         })
     } else {
+        host = "ServiceCall"
         result = await createServiceCall(mysqlPool, {
             address: address,
             service: service,
             response_status: status
         })
     }
-    // await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody))
+    await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody), host)
     ctx.body = originalBody;
 }
 

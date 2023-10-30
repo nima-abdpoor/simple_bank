@@ -54,8 +54,12 @@ async function checkTokenValidation(ctx, next) {
             serviceName = Service.ADD_ACCOUNT
             break;
         }
-        case ctx.path.includes("/permission"): {
+        case ctx.path.includes("/permission") && ctx.method === "POST": {
             serviceName = Service.UPDATE_PERMISSIONS
+            break;
+        }
+        case ctx.path.includes("/permission") && ctx.method === "GET": {
+            serviceName = Service.GET_PERMISSIONS
             break;
         }
         case ctx.path.includes("/accounts"): {
