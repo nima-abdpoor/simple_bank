@@ -14,7 +14,20 @@ function generateJWT(payload, username) {
             issuer: process.env.JWT_ISSUER,
         }
     );
-    return { access };
+    const refresh = jwt.sign(
+        {
+            name: username,
+            type: process.env.JWT_REFRESH,
+        },
+        process.env.JWT_KEY,
+        {
+            subject: payload,
+            expiresIn: parseInt(process.env.JWT_REFRESH_TIME, 10),
+            audience: process.env.JWT_AUDIENCE,
+            issuer: process.env.JWT_ISSUER,
+        }
+    );
+    return { access, refresh };
 }
 
 module.exports = generateJWT

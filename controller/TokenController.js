@@ -20,16 +20,16 @@ async function GetToken(router, db) {
                 payload += serviceIndex
             }
             const userResult = await getUser(db, context.params.nid)
-            const access = generateJWT(payload, context.params.nid)
+            const token = generateJWT(payload, context.params.nid)
             createTokenTransaction(db, {
                 user: userResult.Id,
                 services: services,
-                token: access
+                token: token
             }).catch(err => {
                 console.log(err)
             });
             context.status = 200
-            return context.body = {accessToken: access.access}
+            return context.body = {access: token.access, refresh: token.refresh}
         } catch (err) {
             console.log(err)
             context.body = err.message
