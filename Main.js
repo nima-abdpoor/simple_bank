@@ -4,9 +4,10 @@ const startController = require("./controller/InitController");
 const dotenv = require("dotenv");
 
 
-main()
 function main(){
     dotenv.config()
     server.startServer()
     startController(server.router, mysqlPool).then()
 }
+
+main()
