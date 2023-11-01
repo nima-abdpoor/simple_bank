@@ -1,0 +1,28 @@
+version: '3.8'
+
+
+services:
+  mysqldb:
+    image: mysql:latest
+    build: ./.
+    restart: on-failure
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=sys
+    volumes:
+      - db:/var/lib/mysql
+  app:
+    depends_on:
+      - mysqldb
+    build: ./.
+    environment:
+      - ADDRESS=0.0.0.0
+      - PORT=4000
+    restart: on-failure
+    env_file: ./.env
+    stdin_open: true
+    tty: true
+
+volumes:
+  db:
