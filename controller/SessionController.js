@@ -1,8 +1,14 @@
-const {addInRedis} = require("../service/RedisService");
+const {getFromRedis} = require("../service/RedisService");
+const {sessionGenerator} = require("../utils/session/Session");
 
 async function GetSession(router, db){
-    router.get("/session", async (context, next) => {
-        await addInRedis("salam", "nima")
+    router.get("/:nid/session", async (context, next) => {
+        let nid = context.params.nid
+        const session = await getFromRedis(nid)
+        if (session.success){
+            context.status = 200
+            return context.body = {sessionId: session.value}
+        }
     })
 }
 
