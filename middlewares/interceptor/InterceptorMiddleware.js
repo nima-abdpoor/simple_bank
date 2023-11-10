@@ -10,6 +10,7 @@ async function interceptor(ctx, next) {
     let nid = ctx.request.body.nid
     let rawBody = ctx.request.rawBody
     let address = ctx.request.ip
+    ctx.serverError = []
     await next()
     if (service.includes("/createUser")) {
         if (nid !== undefined) userResult = await getUser(mysqlPool, nid)
@@ -37,7 +38,11 @@ async function interceptor(ctx, next) {
             response_status: status
         })
     }
-    await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody), host)
+    try {
+        await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody), JSON.stringify(ctx.serverError), host)
+    }catch (error){
+        console.log(error)
+    }
     ctx.body = originalBody;
 }
 

@@ -27,22 +27,22 @@ async function CreateUser(router, db){
                     hashedPassword = result.hashedPassword
                 }
             });
-            console.log(access)
             const createUserResult = await createUserTr(db, {username: username, password: hashedPassword, nid: nid, access: access})
-            // const result = await createUser(db, {username: username, password: hashedPassword, nid: nid});
-            console.log(createUserResult)
+            if (!createUserResult.success){
+                console.log(createUserResult)
+                return context.status = 500
+            }
             context.body = { message: "User created successfully"}
             return context.status = 200
-
         }catch (err){
-            console.log(err)
-            if (err.includes("Duplicate entry")){
+            context.serverError.push(err)
+            if (err.error.code.includes("ER_DUP_ENTRY")){
                 context.body = {error: "User Already Exits!"}
                 return context.status = 401
             }
             console.log("UserController:" + err)
             context.body = {error: err}
-            return context.status = 502
+            return context.status = 500
         }
     })
 }

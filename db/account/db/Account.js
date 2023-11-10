@@ -8,8 +8,6 @@ const createAccountQuery = "INSERT INTO accounts (name, number, type) VALUES (?,
 const createUserAccount = "INSERT INTO user_account (user, account) VALUES (?,?)"
 const createUserPermissions = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
 const findAccountByNumber = "SELECT Id FROM accounts WHERE number = ?"
-const util = require('util');
-const sleep = util.promisify(setTimeout);
 
 
 function getAccounts(connection, getAccountBody) {

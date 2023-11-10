@@ -1,5 +1,7 @@
 const createUserQuery = "INSERT INTO users (username, password, nid) VALUES (?,?,?)";
 const createUserAccessQuery = "INSERT INTO user_access (user, access) VALUES (?,?)";
+const util = require('util');
+const sleep = util.promisify(setTimeout);
 function createUser(connection, user) {
     return new Promise((resolve, reject) => {
         const createUserQuery = "INSERT INTO users SET ?";
