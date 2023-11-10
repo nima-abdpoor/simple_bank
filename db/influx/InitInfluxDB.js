@@ -1,7 +1,7 @@
 const {InfluxDB} = require('@influxdata/influxdb-client')
 const {Point} = require('@influxdata/influxdb-client')
 
-const token = 'cg1dY0y-cIcPvTW_StK9qGELGI2LNm3z3uhUtkqvMFVBZr15BzmnBMpozvjQY57vUyTgmGRe2jNx6hArYsohMg=='
+const token = '17016_dKDI46cCu7c66ysgFXBX6ivvOV6qWQMLiMMv9XX9fJh_4gWbDIz9fx8F-OItfQaAhFMgYHlmnHn9PeeQ=='
 const org = 'nima'
 const bucket = 'bucket'
 

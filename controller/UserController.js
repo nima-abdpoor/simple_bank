@@ -1,10 +1,11 @@
-const {createUser} = require("../db/user/Users");
+const {createUser, createUserTr} = require("../db/user/Users");
 const bcrypt = require("bcryptjs")
 async function CreateUser(router, db){
     let status = 502
     let hashedPassword = ""
     router.post("/createUser", async (context, next) => {
         try {
+            const access = context.request.body.access ?? 'access';
             if (context.request.body.username === undefined
                 || context.request.body.password === undefined
                 || context.request.body.nid === undefined){
@@ -26,11 +27,15 @@ async function CreateUser(router, db){
                     hashedPassword = result.hashedPassword
                 }
             });
-            const result = await createUser(db, {username: username, password: hashedPassword, nid: nid});
+            console.log(access)
+            const createUserResult = await createUserTr(db, {username: username, password: hashedPassword, nid: nid, access: access})
+            // const result = await createUser(db, {username: username, password: hashedPassword, nid: nid});
+            console.log(createUserResult)
             context.body = { message: "User created successfully"}
             return context.status = 200
 
         }catch (err){
+            console.log(err)
             if (err.includes("Duplicate entry")){
                 context.body = {error: "User Already Exits!"}
                 return context.status = 401

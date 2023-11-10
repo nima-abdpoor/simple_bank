@@ -12,14 +12,13 @@ async function CreateAccount(router, db) {
             const userResult = await getUser(db, context.params.nid)
             let accountNumber = Math.floor((Math.random() * 10000) + 10000);
             accountNumber += (AccountTypes.findIndex(x => x === type) + 1).toString()
-            createAccountTransaction(db, {
+            const accountTrResult = await createAccountTransaction(db, {
                 name: name,
                 type: type,
                 number: accountNumber,
                 userId: userResult.Id
-            }).catch(err => {
-                console.log(err)
-            });
+            })
+            console.log(accountTrResult)
             context.body = {
                 account: {
                     name: name,

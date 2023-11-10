@@ -9,6 +9,13 @@ CREATE TABLE users
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE user_access
+(
+    `Id`     INT PRIMARY KEY UNIQUE auto_increment,
+    `user`   INT,
+    `access` varchar(255)
+);
+
 CREATE TABLE accounts
 (
     `Id`         INT PRIMARY KEY UNIQUE auto_increment,
@@ -72,6 +79,8 @@ CREATE TABLE `service_call`
 );
 
 ALTER TABLE `user_account`
+    ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
+ALTER TABLE `user_access`
     ADD FOREIGN KEY (`user`) REFERENCES `users` (`Id`);
 ALTER TABLE `user_account`
     ADD FOREIGN KEY (`account`) REFERENCES `accounts` (`id`);

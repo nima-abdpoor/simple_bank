@@ -8,6 +8,9 @@ const createAccountQuery = "INSERT INTO accounts (name, number, type) VALUES (?,
 const createUserAccount = "INSERT INTO user_account (user, account) VALUES (?,?)"
 const createUserPermissions = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
 const findAccountByNumber = "SELECT Id FROM accounts WHERE number = ?"
+const util = require('util');
+const sleep = util.promisify(setTimeout);
+
 
 function getAccounts(connection, getAccountBody) {
     return new Promise((resolve, reject) => {
@@ -43,7 +46,7 @@ function findAccountIdByNumber(connection, number) {
     })
 }
 
-const createAccountTransaction = (pool, transactionBody) => {
+async function createAccountTransaction(pool, transactionBody) {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
             if (err) {
@@ -86,6 +89,7 @@ const createAccountTransaction = (pool, transactionBody) => {
                                     return reject("createAccountTransaction Commit failed");
                                 });
                             }
+                            resolve({success: true})
                             connection.release()
                         })
                     })
