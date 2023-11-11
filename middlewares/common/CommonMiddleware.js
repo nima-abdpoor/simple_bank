@@ -3,6 +3,7 @@ const {mysqlPool} = require("../../db/DataBaseInit")
 const isPasswordMatches = require("../../utils/PasswordDecryption");
 const jwt = require("jsonwebtoken");
 const {Service} = require("../../utils/Services");
+const {getTokenActivationState} = require("../../db/token/Token");
 const tenDigitRegex = /^\d{10}$/;
 
 async function checkNationalCodeValidation(ctx, next) {
@@ -84,7 +85,13 @@ async function checkTokenValidation(ctx, next) {
                 ctx.status = 401
                 return ctx.body = {error: "Invalid token type"}
             }
-            if ((decoded.sub + '').indexOf(serviceName) <= -1) {
+            let sub = decoded.sub.split("_")
+            const activationState = await getTokenActivationState(mysqlPool, sub[1])
+            if (activationState[0].isActive !== 1){
+                ctx.status = 401
+                return ctx.body = {error: "provided token has been revoked!"}
+            }
+            if ((sub[0]).indexOf(serviceName) <= -1) {
                 ctx.status = 401
                 return ctx.body = {error: "provided token is not compatible with current service!"}
             } else await next()

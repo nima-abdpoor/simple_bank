@@ -2,7 +2,7 @@ const {Services} = require("../utils/Services")
 require("jsonwebtoken");
 require("../utils/PasswordDecryption");
 const generateJWT = require("../service/JWTService");
-const {createTokenTransaction} = require("../db/token/Token");
+const {createTokenTransaction, getRecordNumbers} = require("../db/token/Token");
 const {getUser} = require("../db/user/Users");
 
 async function GetToken(router, db) {
@@ -20,13 +20,18 @@ async function GetToken(router, db) {
                 payload += serviceIndex
             }
             const userResult = await getUser(db, context.params.nid)
+            const recordNumbers = await getRecordNumbers(db)
+            let tokenId = (recordNumbers[0].count) + 1
+            payload += `_${tokenId}`
             const token = generateJWT(payload, context.params.nid)
             createTokenTransaction(db, {
+                id: tokenId,
                 user: userResult.Id,
                 services: services,
                 token: token
             }).catch(err => {
                 console.log(err)
+                return context.status = 500
             });
             context.status = 200
             return context.body = {access: token.access, refresh: token.refresh}

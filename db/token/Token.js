@@ -1,5 +1,31 @@
-const createTokenQuery = "INSERT INTO tokens (user, token) VALUES (?,?)"
+const createTokenQuery = "INSERT INTO tokens (id, user, token) VALUES (?,?,?)"
 const createUserTokenQuery = "INSERT INTO token_service (token, service) VALUES (?,?)"
+const recordNumbersQuery = "SELECT COUNT(*) as 'count' FROM tokens"
+const getTokenActivationStateQuery = "select isActive from tokens where id = ?"
+
+function getRecordNumbers(connection) {
+    return new Promise((resolve, reject) => {
+        connection.query(recordNumbersQuery, (err, res) => {
+            if (err) {
+                reject(err.sqlMessage);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
+
+function getTokenActivationState(connection, id) {
+    return new Promise((resolve, reject) => {
+        connection.query(getTokenActivationStateQuery, id, (err, res) => {
+            if (err) {
+                reject(err.sqlMessage);
+            } else {
+                resolve(res);
+            }
+        })
+    })
+}
 const createTokenTransaction = (pool, transactionBody) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -11,7 +37,7 @@ const createTokenTransaction = (pool, transactionBody) => {
                     connection.release();
                     return reject("Error occurred while creating the transaction");
                 }
-                return connection.execute(createTokenQuery, [transactionBody.user, transactionBody.token.access], (err, result) => {
+                return connection.execute(createTokenQuery, [transactionBody.id, transactionBody.user, transactionBody.token.access], (err, result) => {
                     if (err) {
                         return connection.rollback(() => {
                             connection.release();
@@ -19,7 +45,7 @@ const createTokenTransaction = (pool, transactionBody) => {
                         });
                     }
                     transactionBody.services.forEach((value, index) => {
-                        return connection.execute(createUserTokenQuery, [result.insertId, value], (err) => {
+                        return connection.execute(createUserTokenQuery, [transactionBody.id, value], (err) => {
                             if (err) {
                                 return connection.rollback(() => {
                                     connection.release();
@@ -45,5 +71,7 @@ const createTokenTransaction = (pool, transactionBody) => {
 }
 
 module.exports = {
-    createTokenTransaction
+    createTokenTransaction,
+    getRecordNumbers,
+    getTokenActivationState
 }

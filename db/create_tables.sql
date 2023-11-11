@@ -43,10 +43,11 @@ CREATE TABLE `user_permission`
 
 CREATE TABLE `tokens`
 (
-    `id`         INT PRIMARY KEY UNIQUE auto_increment,
+    `id`         INT PRIMARY KEY UNIQUE,
     `user`       INT,
     `token`      varchar(255),
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `isActive`   TINYINT DEFAULT 1
 );
 
 CREATE TABLE `token_service`
