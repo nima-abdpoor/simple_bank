@@ -7,8 +7,7 @@ require("jsonwebtoken");
 async function CreateAccount(router, db) {
     router.post("/:nid/createAccount", async (context, next) => {
         try {
-            let name = context.request.body.name
-            let type = context.request.body.type
+            let {name, type} = context.request.body
             const userResult = await getUser(db, context.params.nid)
             let accountNumber = Math.floor((Math.random() * 10000) + 10000);
             accountNumber += (AccountTypes.findIndex(x => x === type) + 1).toString()
@@ -29,7 +28,7 @@ async function CreateAccount(router, db) {
             return context.status = 200
         } catch (error) {
             console.log("AccountController:" + error)
-            return context.status = 502
+            context.throw(500, error)
         }
     })
 }

@@ -13,7 +13,7 @@ async function interceptor(ctx, next) {
     ctx.serverError = []
     await next()
     if (service.includes("/createUser")) {
-        if (nid !== undefined) userResult = await getUser(mysqlPool, nid)
+        if (!nid) userResult = await getUser(mysqlPool, nid)
     } else userResult = await getUser(mysqlPool, getNidFromPath(service))
     let originalBody = ctx.body;
     let status = ctx.status
