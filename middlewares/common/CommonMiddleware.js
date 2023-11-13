@@ -37,13 +37,20 @@ function getNidFromPath(path) {
 }
 
 async function checkUserExistence(ctx, next) {
-    if (ctx.path.includes("/token")) {
+    if (ctx.path.includes("/token") ||
+        ctx.path.includes("/createAccount") ||
+        ctx.path.includes("/session") ||
+        ctx.path.includes("/permissions") ||
+        ctx.path.includes("/revokeToken")) {
         let nid = getNidFromPath(ctx.path)
         let userResult = await getUser(mysqlPool, nid)
         if (userResult === undefined) {
             ctx.status = 400
             return ctx.body = {error: `Cant find user with nationalCode:${nid}!`}
-        } else await next()
+        } else {
+            ctx.user = userResult
+            await next()
+        }
     } else await next()
 }
 
