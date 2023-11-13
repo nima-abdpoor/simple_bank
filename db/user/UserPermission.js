@@ -33,6 +33,12 @@ async function getUserPermissionFromAccountId(knex, accountId) {
         .where("account_id", accountId);
 }
 
+async function getUserPermissionFromUserId(knex, userId) {
+    return knex.select()
+        .from(DataBaseTables.UserPermissions)
+        .where("user", userId);
+}
+
 async function getAccountOwnerFromAccountId(knex, accountId) {
     return knex.select()
         .from(DataBaseTables.USER_ACCOUNT)
@@ -114,5 +120,6 @@ module.exports = {
     getUserPermissionFromAccountId,
     getAccountOwnerFromAccountId,
     addingUserPermissionsTransaction,
-    removingUserPermissionsTransaction
+    removingUserPermissionsTransaction,
+    getUserPermissionFromUserId
 }

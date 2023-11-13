@@ -1,4 +1,5 @@
 const accountPermissions = require("../../../utils/permission/Permissions")
+const {DataBaseTables} = require("../../model/Tables");
 
 const getAccountQuery = "select name, number, type, created_at from accounts join user_account\n" +
     "where accounts.id = user_account.account AND user_account.user = ?"
@@ -30,6 +31,12 @@ function getAccounts(connection, getAccountBody) {
             }
         })
     });
+}
+
+async function getAccountInfoById(knex, accountId) {
+    return knex.select()
+        .from(DataBaseTables.ACCOUNT)
+        .where("Id", accountId);
 }
 
 function findAccountIdByNumber(connection, number) {
@@ -108,6 +115,7 @@ const AccountTypes = ["SAVING", "MONEY_MARKET", "FIXED_DEPOSIT", "CURRENT"]
 
 module.exports = {
     AccountTypes,
+    getAccountInfoById,
     createAccountTransaction,
     getAccounts,
     findAccountIdByNumber

@@ -1,11 +1,11 @@
-const {findAccountIdByNumber} = require("../db/account/db/Account");
+const {findAccountIdByNumber, getAccountInfoById} = require("../db/account/db/Account");
 const {getUser, getUserById} = require("../db/user/Users");
 const {
     getUserPermissions,
     addingUserPermissionsTransaction,
     removingUserPermissionsTransaction,
     getUserPermissionFromAccountId,
-    getAccountOwnerFromAccountId
+    getAccountOwnerFromAccountId, getUserPermissionFromUserId
 } = require("../db/user/UserPermission");
 const {knex} = require("../db/DataBaseInit");
 
@@ -54,34 +54,35 @@ async function GetUserPermissions(router, db) {
             let userPermissions = []
             let isOwner
             const userIdMap = new Map();
+            const userAccount = new Map();
             let number = context.request.query.number
             let nid = context.request.query.nid
             if (nid === undefined) nid = context.params.nid
             let permissionType = context.request.query.type
             let accountId;
-            let user;
             if (number !== undefined) {
                 accountId = await findAccountIdByNumber(db, number)
                 if (accountId.length === 0) {
                     context.status = 400
                     return context.body = {error: `cant find accountNumber: ${number}`}
                 }
-            }
-            if (nid !== undefined) {
-                user = await getUser(db, nid)
-                if (user.length === 0) {
-                    context.status = 400
-                    return context.body = {error: `cant find User: ${nid}`}
+                const accountOwner = await getAccountOwnerFromAccountId(knex, accountId[0].Id)
+                const permissions = await getUserPermissionFromAccountId(knex, accountId[0].Id)
+                for (let pr of permissions){
+                    if (!userIdMap.has(pr.user))
+                        userIdMap.set(pr.user, await getUserById(db, pr.user))
+                    let user = userIdMap.get(pr.user)
+                    isOwner = pr.user === accountOwner[0].user;
+                    userPermissions.push({permission: pr.permission, account: number, nid: user.nid, username: user.username, isOwner: isOwner})
                 }
-            }
-            const accountOwner = await getAccountOwnerFromAccountId(knex, accountId[0].Id)
-            const permissions = await getUserPermissionFromAccountId(knex, accountId[0].Id)
-            for (let pr of permissions){
-                if (!userIdMap.has(pr.user))
-                    userIdMap.set(pr.user, await getUserById(db, pr.user))
-                let user = userIdMap.get(pr.user)
-                isOwner = pr.user === accountOwner[0].user;
-                userPermissions.push({permission: pr.permission, account: number, nid: user.nid, username: user.username, isOwner: isOwner})
+            }else {
+                const permissions = await getUserPermissionFromUserId(knex, context.user.Id)
+                for (let pr of permissions){
+                    if (!userAccount.has(pr.account_id))
+                        userAccount.set(pr.account_id, await getAccountInfoById(knex, pr.account_id))
+                    let account = userAccount.get(pr.account_id)
+                    userPermissions.push({permission: pr.permission, account: account[0].number, nid: context.user.nid})
+                }
             }
             context.body = userPermissions
         } catch (error) {
