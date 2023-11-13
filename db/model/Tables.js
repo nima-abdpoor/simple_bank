@@ -1,7 +1,7 @@
 const DataBaseTables = {
     Users: "users",
     UserPermissions: "user_permission",
-    UPDATE_PERMISSIONS: 3,
+    USER_ACCOUNT: "user_account",
     GET_PERMISSIONS: 4
 }
 

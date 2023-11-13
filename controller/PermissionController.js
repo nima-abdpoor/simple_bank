@@ -2,9 +2,10 @@ const {findAccountIdByNumber} = require("../db/account/db/Account");
 const {getUser, getUserById} = require("../db/user/Users");
 const {
     getUserPermissions,
-    getUserPermission,
     addingUserPermissionsTransaction,
-    removingUserPermissionsTransaction, getUserPermissionFromAccountId
+    removingUserPermissionsTransaction,
+    getUserPermissionFromAccountId,
+    getAccountOwnerFromAccountId
 } = require("../db/user/UserPermission");
 const {knex} = require("../db/DataBaseInit");
 
@@ -50,7 +51,9 @@ async function UpdateUserPermission(router, db) {
 async function GetUserPermissions(router, db) {
     router.get("/:nid/permissions", async (context, next) => {
         try {
-            let result = []
+            let userPermissions = []
+            let isOwner
+            const userIdMap = new Map();
             let number = context.request.query.number
             let nid = context.request.query.nid
             if (nid === undefined) nid = context.params.nid
@@ -71,24 +74,16 @@ async function GetUserPermissions(router, db) {
                     return context.body = {error: `cant find User: ${nid}`}
                 }
             }
+            const accountOwner = await getAccountOwnerFromAccountId(knex, accountId[0].Id)
             const permissions = await getUserPermissionFromAccountId(knex, accountId[0].Id)
-            permissions.forEach(permissions => {
-                result.push({user: permissions.user, permission: permissions.permission, account: number})
-            })
-            const uniqueUsers = new Set(permissions.map(item => item.user))
-            for (let id of uniqueUsers){
-                const user = await getUserById(db, id)
-                result.find(res => res.user === user.Id).nid = user.nid
+            for (let pr of permissions){
+                if (!userIdMap.has(pr.user))
+                    userIdMap.set(pr.user, await getUserById(db, pr.user))
+                let user = userIdMap.get(pr.user)
+                isOwner = pr.user === accountOwner[0].user;
+                userPermissions.push({permission: pr.permission, account: number, nid: user.nid, username: user.username, isOwner: isOwner})
             }
-
-            console.log(result)
-            let userPermissions = await getUserPermissions(db, {
-                account: accountId[0].Id,
-                user: user.Id,
-                type: permissionType
-            })
-            let currentPermission = userPermissions.map(item => item.permission)
-            context.body = {permissions: currentPermission}
+            context.body = userPermissions
         } catch (error) {
             console.log("ErrorInGetUserPermissionsController: " + error)
             context.body = error

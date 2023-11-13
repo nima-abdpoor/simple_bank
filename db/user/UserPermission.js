@@ -33,6 +33,12 @@ async function getUserPermissionFromAccountId(knex, accountId) {
         .where("account_id", accountId);
 }
 
+async function getAccountOwnerFromAccountId(knex, accountId) {
+    return knex.select()
+        .from(DataBaseTables.USER_ACCOUNT)
+        .where("account", accountId);
+}
+
 const addingUserPermissionsTransaction = (pool, transactionBody) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -106,6 +112,7 @@ const removingUserPermissionsTransaction = (pool, transactionBody) => {
 module.exports = {
     getUserPermissions,
     getUserPermissionFromAccountId,
+    getAccountOwnerFromAccountId,
     addingUserPermissionsTransaction,
     removingUserPermissionsTransaction
 }
