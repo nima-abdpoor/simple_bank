@@ -5,7 +5,7 @@ async function CreateUser(router, db){
     let hashedPassword = ""
     router.post("/createUser", async (context, next) => {
         try {
-            const access = context.request.body.access ?? 'access';
+            const access = context.request.body.access ?? 'user';
             if (context.request.body.username === undefined
                 || context.request.body.password === undefined
                 || context.request.body.nid === undefined){

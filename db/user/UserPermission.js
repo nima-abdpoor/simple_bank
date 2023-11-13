@@ -1,7 +1,9 @@
+const {DataBaseTables} = require("../model/Tables");
 const getUserPermissionsQuery = "select Id, permission from user_permission WHERE account_id = ? and user = ?"
 const addUserPermissionQuery = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
 const removeUserPermissionQuery = "DELETE FROM user_permission WHERE id= ?"
 const getUserPermissionWithTypeSuffix = " AND user_permission.permission = ?"
+
 function getUserPermissions(connection, userPermissionBody) {
     return new Promise((resolve, reject) => {
         let body = [userPermissionBody.account, userPermissionBody.user]
@@ -14,11 +16,21 @@ function getUserPermissions(connection, userPermissionBody) {
         connection.query(query, body, (err, result) => {
             if (err) {
                 reject(err)
-            }else {
+            } else {
                 resolve(result)
             }
         })
     })
+}
+
+async function getUserPermission(knex, userPermissionBody) {
+    await getUserPermissionFromAccountId(knex, userPermissionBody.accountId)
+}
+
+async function getUserPermissionFromAccountId(knex, accountId) {
+    return knex.select()
+        .from(DataBaseTables.UserPermissions)
+        .where("account_id", accountId);
 }
 
 const addingUserPermissionsTransaction = (pool, transactionBody) => {
@@ -93,6 +105,7 @@ const removingUserPermissionsTransaction = (pool, transactionBody) => {
 
 module.exports = {
     getUserPermissions,
+    getUserPermissionFromAccountId,
     addingUserPermissionsTransaction,
     removingUserPermissionsTransaction
 }

@@ -17,7 +17,6 @@ async function CreateAccount(router, db) {
                 number: accountNumber,
                 userId: userResult.Id
             })
-            console.log(accountTrResult)
             context.body = {
                 account: {
                     name: name,

@@ -1,6 +1,6 @@
 const {createClient} = require('redis');
 const {sessionGenerator} = require("../utils/session/Session");
-const redisURL = "redis://default:redispw@localhost:49153"
+const redisURL = "redis://default:1234567890@localhost:8443"
 
 async function addInRedis(key, value) {
     try {

@@ -1,10 +1,14 @@
 const {findAccountIdByNumber} = require("../db/account/db/Account");
-const {getUser} = require("../db/user/Users");
+const {getUser, getUserById} = require("../db/user/Users");
 const {
     getUserPermissions,
+    getUserPermission,
     addingUserPermissionsTransaction,
-    removingUserPermissionsTransaction
+    removingUserPermissionsTransaction, getUserPermissionFromAccountId
 } = require("../db/user/UserPermission");
+const {knex} = require("../db/DataBaseInit");
+
+
 
 async function UpdateUserPermission(router, db) {
     router.post("/:nid/permission", async (context, next) => {
@@ -46,6 +50,7 @@ async function UpdateUserPermission(router, db) {
 async function GetUserPermissions(router, db) {
     router.get("/:nid/permissions", async (context, next) => {
         try {
+            let result = []
             let number = context.request.query.number
             let nid = context.request.query.nid
             if (nid === undefined) nid = context.params.nid
@@ -66,6 +71,17 @@ async function GetUserPermissions(router, db) {
                     return context.body = {error: `cant find User: ${nid}`}
                 }
             }
+            const permissions = await getUserPermissionFromAccountId(knex, accountId[0].Id)
+            permissions.forEach(permissions => {
+                result.push({user: permissions.user, permission: permissions.permission, account: number})
+            })
+            const uniqueUsers = new Set(permissions.map(item => item.user))
+            for (let id of uniqueUsers){
+                const user = await getUserById(db, id)
+                result.find(res => res.user === user.Id).nid = user.nid
+            }
+
+            console.log(result)
             let userPermissions = await getUserPermissions(db, {
                 account: accountId[0].Id,
                 user: user.Id,

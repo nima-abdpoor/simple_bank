@@ -96,7 +96,5 @@ ALTER TABLE `token_service`
 ALTER TABLE `service_call_user`
     ADD FOREIGN KEY (`user`) REFERENCES `users` (`id`);
 
-ALTER
-USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-flush
-privileges;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '6m9XbA@9;jsb3+d_O5,Q74,kyR?0kF_z';
+flush privileges;

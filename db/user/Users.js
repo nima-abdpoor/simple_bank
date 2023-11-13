@@ -82,8 +82,22 @@ function getUser(connection, nid) {
     })
 }
 
+function getUserById(connection, id) {
+    return new Promise((resolve, reject) => {
+        const getUserQuery = "SELECT * from users where id = ?";
+        connection.query(getUserQuery, [id], (err, result) => {
+            if (err) {
+                reject(err)
+            }else {
+                resolve(result[0])
+            }
+        })
+    })
+}
+
 module.exports = {
     createUser,
     getUser,
-    createUserTr
+    createUserTr,
+    getUserById
 }
