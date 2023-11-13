@@ -5,6 +5,7 @@ const {checkNationalCodeValidation, checkUserExistence, checkTokenValidation} = 
 const {interceptor} = require("./interceptor/InterceptorMiddleware");
 const {checkUpdatePermissionInput} = require("./permission/UpdateUserPermissionMiddleware");
 const {checkUserPermissionInput} = require("./permission/GetUserPermissionsMiddleware");
+const {sessionRequirementChecker} = require("./common/SessionRequirementMiddleWare");
 
 const Middlewares = compose(
     [
@@ -23,6 +24,7 @@ const Middlewares = compose(
         //Common
         checkNationalCodeValidation,
         checkTokenValidation,
+        sessionRequirementChecker,
 
         //Permission
         checkUpdatePermissionInput,
