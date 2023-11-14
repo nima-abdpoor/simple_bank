@@ -23,9 +23,9 @@ const Middlewares = compose(
 
         //Common
         checkNationalCodeValidation,
+        sessionValidationChecker,
         checkTokenValidation,
         sessionRequirementChecker,
-        sessionValidationChecker,
 
         //Permission
         checkUpdatePermissionInput,

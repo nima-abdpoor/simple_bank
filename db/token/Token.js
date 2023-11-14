@@ -1,3 +1,4 @@
+const {DataBaseTables} = require("../model/Tables");
 const createTokenQuery = "INSERT INTO tokens (id, user, token) VALUES (?,?,?)"
 const createUserTokenQuery = "INSERT INTO token_service (token, service) VALUES (?,?)"
 const recordNumbersQuery = "SELECT COUNT(*) as 'count' FROM tokens"
@@ -26,6 +27,15 @@ function getTokenActivationState(connection, id) {
         })
     })
 }
+
+async function updateTokenActivationState(knex, id) {
+    return knex.update({
+        isActive: 0
+    })
+        .from(DataBaseTables.TOKEN)
+        .where("id", id);
+}
+
 const createTokenTransaction = (pool, transactionBody) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -73,5 +83,6 @@ const createTokenTransaction = (pool, transactionBody) => {
 module.exports = {
     createTokenTransaction,
     getRecordNumbers,
-    getTokenActivationState
+    getTokenActivationState,
+    updateTokenActivationState
 }

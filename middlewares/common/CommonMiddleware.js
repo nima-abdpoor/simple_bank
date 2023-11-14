@@ -56,6 +56,7 @@ async function checkUserExistence(ctx, next) {
 
 async function checkTokenValidation(ctx, next) {
     let serviceName
+    let checkService = true
     let checkToken = true
     switch (true) {
         case ctx.path.includes("/createAccount"): {
@@ -74,6 +75,10 @@ async function checkTokenValidation(ctx, next) {
             serviceName = Service.GET_DEPOSITS
             break;
         }
+        case ctx.path.includes("/revokeToken"): {
+            checkService = false
+            break;
+        }
         default: {
             checkToken = false
             break
@@ -81,7 +86,8 @@ async function checkTokenValidation(ctx, next) {
     }
     if (checkToken){
         try {
-            const token = ctx.request.headers.authorization;
+            const authorization = ctx.request.headers.authorization
+            let token =  authorization ?? ctx.request.body.token
             const decoded = jwt.verify(token, process.env.JWT_KEY);
             if (
                 decoded.type !== process.env.JWT_ACCESS ||
@@ -98,10 +104,13 @@ async function checkTokenValidation(ctx, next) {
                 ctx.status = 401
                 return ctx.body = {error: "provided token has been revoked!"}
             }
-            if ((sub[0]).indexOf(serviceName) <= -1) {
+            if (checkService && (sub[0]).indexOf(serviceName) <= -1) {
                 ctx.status = 401
                 return ctx.body = {error: "provided token is not compatible with current service!"}
-            } else await next()
+            } else {
+                ctx.user.tokenId = sub[1]
+                await next()
+            }
         } catch (err) {
             if (err.name === "JsonWebTokenError") {
                 ctx.status = 401
