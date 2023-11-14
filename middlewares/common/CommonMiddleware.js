@@ -11,6 +11,7 @@ async function checkNationalCodeValidation(ctx, next) {
         ctx.path.includes("/token") ||
         ctx.path.includes("/createAccount") ||
         ctx.path.includes("/permission") ||
+        ctx.path.includes("/refreshToken") ||
         ctx.path.includes("/createUser")) {
         let nid;
         if (ctx.path.includes("/createUser")) nid = ctx.request.body.nid
@@ -41,6 +42,7 @@ async function checkUserExistence(ctx, next) {
         ctx.path.includes("/createAccount") ||
         ctx.path.includes("/session") ||
         ctx.path.includes("/permissions") ||
+        ctx.path.includes("/refreshToken") ||
         ctx.path.includes("/revokeToken")) {
         let nid = getNidFromPath(ctx.path)
         let userResult = await getUser(mysqlPool, nid)
@@ -58,6 +60,7 @@ async function checkTokenValidation(ctx, next) {
     let serviceName
     let checkService = true
     let checkToken = true
+    let tokenType = process.env.JWT_ACCESS
     switch (true) {
         case ctx.path.includes("/createAccount"): {
             serviceName = Service.ADD_ACCOUNT
@@ -79,6 +82,11 @@ async function checkTokenValidation(ctx, next) {
             checkService = false
             break;
         }
+        case ctx.path.includes("/refreshToken"): {
+            checkService = false
+            tokenType = process.env.JWT_REFRESH
+            break;
+        }
         default: {
             checkToken = false
             break
@@ -90,7 +98,7 @@ async function checkTokenValidation(ctx, next) {
             let token =  authorization ?? ctx.request.body.token
             const decoded = jwt.verify(token, process.env.JWT_KEY);
             if (
-                decoded.type !== process.env.JWT_ACCESS ||
+                decoded.type !== tokenType ||
                 decoded.aud !== process.env.JWT_AUDIENCE ||
                 decoded.iss !== process.env.JWT_ISSUER ||
                 decoded.name !== getNidFromPath(ctx.path)

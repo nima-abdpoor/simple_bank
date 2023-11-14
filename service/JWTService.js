@@ -30,4 +30,23 @@ function generateJWT(payload, username) {
     return { access, refresh };
 }
 
-module.exports = generateJWT
+function generateJWTAccess(payload, username) {
+    return jwt.sign(
+        {
+            name: username,
+            type: process.env.JWT_ACCESS,
+        },
+        process.env.JWT_KEY,
+        {
+            subject: payload,
+            expiresIn: parseInt(process.env.JWT_ACCESS_TIME, 10),
+            audience: process.env.JWT_AUDIENCE,
+            issuer: process.env.JWT_ISSUER,
+        }
+    )
+}
+
+module.exports = {
+    generateJWT,
+    generateJWTAccess
+}

@@ -36,6 +36,19 @@ async function updateTokenActivationState(knex, id) {
         .where("id", id);
 }
 
+async function getAccessTokenById(knex, id) {
+    return knex.select()
+        .from(DataBaseTables.TOKEN)
+        .where("Id", id);
+}
+
+async function getTokenServices(knex, id) {
+    console.log(id)
+    return knex.select()
+        .from(DataBaseTables.TOKEN_SERVICE)
+        .where("token", id);
+}
+
 const createTokenTransaction = (pool, transactionBody) => {
     return new Promise((resolve, reject) => {
         pool.getConnection((err, connection) => {
@@ -47,7 +60,7 @@ const createTokenTransaction = (pool, transactionBody) => {
                     connection.release();
                     return reject("Error occurred while creating the transaction");
                 }
-                return connection.execute(createTokenQuery, [transactionBody.id, transactionBody.user, transactionBody.token.access], (err, result) => {
+                return connection.execute(createTokenQuery, [transactionBody.id, transactionBody.user, transactionBody.token.access ?? transactionBody.token], (err, result) => {
                     if (err) {
                         return connection.rollback(() => {
                             connection.release();
@@ -84,5 +97,7 @@ module.exports = {
     createTokenTransaction,
     getRecordNumbers,
     getTokenActivationState,
-    updateTokenActivationState
+    updateTokenActivationState,
+    getAccessTokenById,
+    getTokenServices
 }

@@ -1,5 +1,5 @@
 const User = require("./UserController");
-const {GetToken} = require("./TokenController");
+const {GetToken, RefreshToken} = require("./TokenController");
 const {CreateAccount, GetAccount} = require("./AccountController");
 const {UpdateUserPermission, GetUserPermissions} = require("./PermissionController");
 const {GetSession} = require("./SessionController");
@@ -19,6 +19,7 @@ async function startController(router, db) {
 
     //token
     await GetToken(router, db)
+    await RefreshToken(router, db)
     await RevokeToken(router, db)
 
     //session
