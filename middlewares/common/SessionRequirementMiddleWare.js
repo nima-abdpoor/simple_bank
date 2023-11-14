@@ -12,7 +12,6 @@ async function sessionRequirementChecker(ctx, next) {
             ctx.status = 403
             return ctx.body = {message: "Only admin"}
         }
-        console.log(ctx.user)
     } else await next();
 }
 

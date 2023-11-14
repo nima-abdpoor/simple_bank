@@ -1,18 +1,24 @@
-const {getFromRedis} = require("../service/RedisService");
+const {getFromRedis, addInRedis} = require("../service/RedisService");
 const {sessionGenerator} = require("../utils/session/Session");
-const {gett} = require("../db/account/db/Account");
 
-async function GetSession(router, db){
+async function GetSession(router){
     router.get("/:nid/session", async (context, next) => {
-        let nid = context.params.nid
-        gett(db)
-        const session = await getFromRedis(nid)
-        console.log(session)
-        if (session.success){
-            context.status = 200
-            return context.body = {sessionId: session.value}
-        }
-        else {
+        try {
+            let nid = context.params.nid
+            let session = await getFromRedis(nid)
+            if (session.value === null) {
+                await addInRedis(nid, sessionGenerator())
+                session = await getFromRedis(nid)
+            }
+            if (session.success){
+                context.status = 200
+                return context.body = {sessionId: session.value}
+            }
+            else {
+                context.throw(500, "Server Error In Generating Session!")
+            }
+        }catch (error){
+            console.log("GetSession:" + error)
             context.status = 500
             return context.body = {error: ""}
         }

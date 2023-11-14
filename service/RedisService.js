@@ -1,6 +1,6 @@
 const {createClient} = require('redis');
 const {sessionGenerator} = require("../utils/session/Session");
-const redisURL = "redis://default:1234567890@localhost:8443"
+const redisURL = "redis://localhost:6379/"
 
 async function addInRedis(key, value) {
     try {
@@ -8,7 +8,7 @@ async function addInRedis(key, value) {
             url: redisURL
         });
         await client.connect()
-        await client.set(key, value, 'EX', 10, (error) => {
+        await client.setEx(key, process.env.REDIS_TTL, value, (error) => {
             if(error) {
                 console.log(error)
                 return {error: error}
@@ -31,10 +31,6 @@ async function getFromRedis(key) {
         });
         await client.connect()
         let value = await client.get(key)
-        if (value === null) {
-            await addInRedis(key, sessionGenerator())
-            value = await client.get(key)
-        }
         await client.quit()
         return {success: true, value: value}
     } catch (err) {
@@ -49,5 +45,6 @@ async function getFromRedis(key) {
 
 
 module.exports = {
-    getFromRedis
+    getFromRedis,
+    addInRedis
 }
