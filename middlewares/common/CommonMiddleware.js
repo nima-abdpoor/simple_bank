@@ -108,6 +108,10 @@ async function checkTokenValidation(ctx, next) {
             }
             let sub = decoded.sub.split("_")
             const activationState = await getTokenActivationState(mysqlPool, sub[1])
+            if (activationState.length === 0){
+                ctx.status = 401
+                return ctx.body = {error: "token not found!"}
+            }
             if (activationState[0].isActive !== 1){
                 ctx.status = 401
                 return ctx.body = {error: "provided token has been revoked!"}

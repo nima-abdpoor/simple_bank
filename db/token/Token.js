@@ -1,4 +1,5 @@
 const {DataBaseTables} = require("../model/Tables");
+const {knex} = require("../DataBaseInit");
 const createTokenQuery = "INSERT INTO tokens (id, user, token) VALUES (?,?,?)"
 const createUserTokenQuery = "INSERT INTO token_service (token, service) VALUES (?,?)"
 const recordNumbersQuery = "SELECT COUNT(*) as 'count' FROM tokens"
@@ -36,18 +37,29 @@ async function updateTokenActivationState(knex, id) {
         .where("id", id);
 }
 
-async function getAccessTokenById(knex, id) {
+async function updateTokenAccessToken(id, userId, token) {
+    return knex.update({
+        user: userId,
+        token: token,
+        isActive: 1
+    })
+        .from(DataBaseTables.TOKEN)
+        .where("id", id);
+}
+
+async function getAccessTokenById(id) {
     return knex.select()
         .from(DataBaseTables.TOKEN)
         .where("Id", id);
 }
 
-async function getTokenServices(knex, id) {
-    console.log(id)
+async function getTokenServices(id) {
     return knex.select()
         .from(DataBaseTables.TOKEN_SERVICE)
         .where("token", id);
 }
+
+
 
 const createTokenTransaction = (pool, transactionBody) => {
     return new Promise((resolve, reject) => {
@@ -99,5 +111,6 @@ module.exports = {
     getTokenActivationState,
     updateTokenActivationState,
     getAccessTokenById,
-    getTokenServices
+    getTokenServices,
+    updateTokenAccessToken
 }
