@@ -66,8 +66,8 @@ async function GetUserPermissions(router, db) {
                     context.status = 400
                     return context.body = {error: `cant find accountNumber: ${number}`}
                 }
-                const accountOwner = await getAccountOwnerFromAccountId(knex, accountId[0].Id)
-                const permissions = await getUserPermissionFromAccountId(knex, accountId[0].Id)
+                const accountOwner = await getAccountOwnerFromAccountId(accountId[0].Id)
+                const permissions = await getUserPermissionFromAccountId(accountId[0].Id)
                 for (let pr of permissions){
                     if (!userIdMap.has(pr.user))
                         userIdMap.set(pr.user, await getUserById(db, pr.user))
@@ -76,10 +76,10 @@ async function GetUserPermissions(router, db) {
                     userPermissions.push({permission: pr.permission, account: number, nid: user.nid, username: user.username, isOwner: isOwner})
                 }
             }else {
-                const permissions = await getUserPermissionFromUserId(knex, context.user.Id)
+                const permissions = await getUserPermissionFromUserId(context.user.Id)
                 for (let pr of permissions){
                     if (!userAccount.has(pr.account_id))
-                        userAccount.set(pr.account_id, await getAccountInfoById(knex, pr.account_id))
+                        userAccount.set(pr.account_id, await getAccountInfoById(pr.account_id))
                     let account = userAccount.get(pr.account_id)
                     userPermissions.push({permission: pr.permission, account: account[0].number, nid: context.user.nid})
                 }

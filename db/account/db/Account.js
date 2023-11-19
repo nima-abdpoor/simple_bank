@@ -1,5 +1,6 @@
 const accountPermissions = require("../../../utils/permission/Permissions")
 const {DataBaseTables} = require("../../model/Tables");
+const {knex} = require("../../DataBaseInit");
 
 const getAccountQuery = "select name, number, type, created_at from accounts join user_account\n" +
     "where accounts.id = user_account.account AND user_account.user = ?"
@@ -33,7 +34,7 @@ function getAccounts(connection, getAccountBody) {
     });
 }
 
-async function getAccountInfoById(knex, accountId) {
+async function getAccountInfoById(accountId) {
     return knex.select()
         .from(DataBaseTables.ACCOUNT)
         .where("Id", accountId);

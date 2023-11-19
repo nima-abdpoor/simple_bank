@@ -1,4 +1,5 @@
 const {DataBaseTables} = require("../model/Tables");
+const {knex} = require("../DataBaseInit");
 const getUserPermissionsQuery = "select Id, permission from user_permission WHERE account_id = ? and user = ?"
 const addUserPermissionQuery = "INSERT INTO user_permission (user, account_id, permission) VALUES (?,?,?)"
 const removeUserPermissionQuery = "DELETE FROM user_permission WHERE id= ?"
@@ -23,23 +24,19 @@ function getUserPermissions(connection, userPermissionBody) {
     })
 }
 
-async function getUserPermission(knex, userPermissionBody) {
-    await getUserPermissionFromAccountId(knex, userPermissionBody.accountId)
-}
-
-async function getUserPermissionFromAccountId(knex, accountId) {
+async function getUserPermissionFromAccountId(accountId) {
     return knex.select()
         .from(DataBaseTables.UserPermissions)
         .where("account_id", accountId);
 }
 
-async function getUserPermissionFromUserId(knex, userId) {
+async function getUserPermissionFromUserId(userId) {
     return knex.select()
         .from(DataBaseTables.UserPermissions)
         .where("user", userId);
 }
 
-async function getAccountOwnerFromAccountId(knex, accountId) {
+async function getAccountOwnerFromAccountId(accountId) {
     return knex.select()
         .from(DataBaseTables.USER_ACCOUNT)
         .where("account", accountId);

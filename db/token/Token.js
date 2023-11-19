@@ -29,7 +29,7 @@ function getTokenActivationState(connection, id) {
     })
 }
 
-async function updateTokenActivationState(knex, id) {
+async function updateTokenActivationState(id) {
     return knex.update({
         isActive: 0
     })
