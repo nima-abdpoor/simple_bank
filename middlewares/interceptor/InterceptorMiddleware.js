@@ -39,7 +39,7 @@ async function interceptor(ctx, next) {
         })
     }
     try {
-        await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody), JSON.stringify(ctx.serverError), host)
+        await writeDataInInflux(result.insertId, rawBody, JSON.stringify(responseBody), `${ctx.serverError}`, host)
     }catch (error){
         console.log(error)
     }
