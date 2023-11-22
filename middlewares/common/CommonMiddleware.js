@@ -42,6 +42,7 @@ async function checkUserExistence(ctx, next) {
         ctx.path.includes("/createAccount") ||
         ctx.path.includes("/session") ||
         ctx.path.includes("/permissions") ||
+        ctx.path.includes("/permission") ||
         ctx.path.includes("/refreshToken") ||
         ctx.path.includes("/revokeToken")) {
         let nid = getNidFromPath(ctx.path)

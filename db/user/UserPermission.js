@@ -24,22 +24,16 @@ function getUserPermissions(connection, userPermissionBody) {
     })
 }
 
-async function getUserPermissionFromAccountId(accountId) {
-    return knex.select()
-        .from(DataBaseTables.UserPermissions)
-        .where("account_id", accountId);
-}
-
 async function getUserPermissionFromUserId(userId) {
     return knex.select()
         .from(DataBaseTables.UserPermissions)
         .where("user", userId);
 }
 
-async function getAccountOwnerFromAccountId(accountId) {
+async function getUserPermissionByAccountIdNotOwner(userId) {
     return knex.select()
-        .from(DataBaseTables.USER_ACCOUNT)
-        .where("account", accountId);
+        .from(DataBaseTables.UserPermissions)
+        .whereNot("user", userId)
 }
 
 const addingUserPermissionsTransaction = (pool, transactionBody) => {
@@ -114,9 +108,8 @@ const removingUserPermissionsTransaction = (pool, transactionBody) => {
 
 module.exports = {
     getUserPermissions,
-    getUserPermissionFromAccountId,
-    getAccountOwnerFromAccountId,
     addingUserPermissionsTransaction,
     removingUserPermissionsTransaction,
-    getUserPermissionFromUserId
+    getUserPermissionFromUserId,
+    getUserPermissionByAccountIdNotOwner
 }

@@ -19,6 +19,7 @@
     "koa-bodyparser": "^4.4.1",
     "koa-compose": "^4.1.0",
     "koa-router": "^11.0.2",
+    "lodash": "^4.17.21",
     "mysql": "^2.18.1",
     "mysql2": "^3.6.2",
     "redis": "^4.6.10"
